@@ -1,0 +1,33 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local databases and runtime output
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Model weights and large binary artifacts (hosted on Hugging Face)
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.h5
+*.keras
+
+# Common generated files
+.DS_Store
+Thumbs.db
+node_modules/
+dist/
+build/

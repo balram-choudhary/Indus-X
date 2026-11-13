@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg-main: #0a0d13;
+    --bg-card: #11151f;
+    --bg-card-hover: #161c29;
+    --border-color: #232b3e;
+    --border-focus: #3b82f6;
+    
+    --text-primary: #f1f5f9;
+    --text-muted: #8492a6;
+    --text-dim: #4b5563;
+
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #0f141f;
+}
+::-webkit-scrollbar-thumb {
+    background: #232b3e;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #3b82f6;
+}
+
+.mono-font {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Industrial Grid & Card Structure */
+.quadrant-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.card-header {
+    background: rgba(18, 24, 38, 0.85);
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Glowing Pulsing Status Dots */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.status-dot.active-green {
+    background-color: var(--accent-emerald);
+    box-shadow: 0 0 8px var(--accent-emerald);
+}
+.status-dot.active-red {
+    background-color: var(--accent-rose);
+    box-shadow: 0 0 10px var(--accent-rose);
+    animation: pulseRed 1s infinite alternate;
+}
+.status-dot.active-amber {
+    background-color: var(--accent-amber);
+    box-shadow: 0 0 8px var(--accent-amber);
+}
+
+@keyframes pulseRed {
+    from { opacity: 0.6; transform: scale(0.9); }
+    to { opacity: 1.0; transform: scale(1.2); }
+}
+
+/* Video Stage Canvas Frame */
+.video-viewport {
+    background-color: #0d1117;
+    position: relative;
+    width: 100%;
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #1a2234;
+}
+
+.video-viewport img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Badges & Chips */
+.tech-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.badge-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+.badge-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+.badge-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+.badge-red { background: rgba(244, 63, 94, 0.15); color: #f87171; border: 1px solid rgba(244, 63, 94, 0.3); }
+
+/* Buttons */
+.btn-tech {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+}
+.btn-primary {
+    background: #1d4ed8;
+    color: #ffffff;
+    border-color: #2563eb;
+}
+.btn-primary:hover {
+    background: #2563eb;
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.45);
+}
+.btn-secondary {
+    background: #1e293b;
+    color: #cbd5e1;
+    border-color: #334155;
+}
+.btn-secondary:hover {
+    background: #293548;
+    color: #ffffff;
+    border-color: #475569;
+}
+.btn-danger {
+    background: rgba(225, 29, 72, 0.2);
+    color: #fda4af;
+    border-color: rgba(225, 29, 72, 0.4);
+}
+.btn-danger:hover {
+    background: rgba(225, 29, 72, 0.35);
+    border-color: #f43f5e;
+}
+.btn-disabled {
+    opacity: 0.45;
+    cursor: not-allowed !important;
+    filter: grayscale(0.8);
+}
+
+/* Integrity Breach Flash Animation */
+.breach-alert-active {
+    animation: breachFlash 0.5s ease-in-out infinite alternate;
+}
+@keyframes breachFlash {
+    from { border-color: #232b3e; }
+    to { border-color: #f43f5e; box-shadow: 0 0 25px rgba(244, 63, 94, 0.4); }
+}
+

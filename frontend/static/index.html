@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INDUS-X | Industrial Quality Intelligence & Resolution Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="flex flex-col h-screen text-slate-200 bg-[#0a0d13]">
+
+    <!-- Top Persistent Industrial Header -->
+    <header class="h-14 border-b border-[#1f2738] bg-[#0e131d] px-4 flex items-center justify-between shrink-0">
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded bg-blue-600 flex items-center justify-center font-bold text-white tracking-wider shadow-lg shadow-blue-500/30">
+                IX
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="font-extrabold text-base tracking-wide text-white">INDUS-X</span>
+                    <span class="text-xs px-2 py-0.5 rounded bg-blue-900/50 text-blue-400 font-mono border border-blue-700/40">v2.0 MVP</span>
+                </div>
+                <div class="text-[11px] text-slate-400">Industrial Quality Intelligence & Closed-Loop Resolution</div>
+            </div>
+        </div>
+
+        <!-- 5-Stage Pipeline Indicator -->
+        <div class="hidden xl:flex items-center gap-1.5 font-mono text-[11px] bg-[#141a27] py-1 px-3 rounded-full border border-[#222c40]">
+            <span class="text-blue-400 font-semibold flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>1. SEE</span>
+            <span class="text-slate-600">──►</span>
+            <span class="text-cyan-400 font-semibold">2. VERIFY</span>
+            <span class="text-slate-600">──►</span>
+            <span class="text-amber-400 font-semibold">3. TRACE</span>
+            <span class="text-slate-600">──►</span>
+            <span class="text-emerald-400 font-semibold">4. DECIDE & ACT</span>
+            <span class="text-slate-600">──►</span>
+            <span class="text-indigo-400 font-semibold">5. LEARN</span>
+        </div>
+
+        <!-- Right Side: Mode Switcher & RBAC Role Switcher -->
+        <div class="flex items-center gap-3">
+            <!-- Split Comparison Toggle -->
+            <button id="toggleSplitBtn" class="btn-tech btn-secondary text-xs">
+                <i data-lucide="split-square-vertical" class="w-3.5 h-3.5"></i>
+                <span id="splitBtnText">Split Mode (Dumb vs Smart)</span>
+            </button>
+
+            <!-- Role Selector -->
+            <div class="flex items-center gap-2 bg-[#141a27] px-2.5 py-1 rounded border border-[#222c40]">
+                <i data-lucide="shield-check" class="w-4 h-4 text-amber-400"></i>
+                <span class="text-xs text-slate-400 font-medium">Role:</span>
+                <select id="roleSelector" class="bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer">
+                    <option value="OPERATOR" class="bg-[#141a27]">Operator (Tier 1)</option>
+                    <option value="QUALITY_ENGINEER" selected class="bg-[#141a27]">Quality Engineer (Tier 2)</option>
+                    <option value="PLANT_MANAGER" class="bg-[#141a27]">Plant Manager / Finance (Tier 3)</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace (Zero-Scroll 4-Quadrant Command Center) -->
+    <main class="flex-1 p-3 grid grid-cols-2 grid-rows-2 gap-3 overflow-hidden">
+
+        <!-- ================= QUADRANT 1: TEST BENCH (Top-Left) ================= -->
+        <section class="quadrant-card">
+            <div class="card-header">
+                <div class="flex items-center gap-2">
+                    <span class="status-dot active-green"></span>
+                    <h2 class="font-bold text-xs uppercase tracking-wider text-slate-200">Quadrant 1: Multi-Defect Test Bench</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="q1StatusTag" class="tech-badge badge-blue">Ready</span>
+                    <span class="mono-font text-[11px] text-slate-400">CAM-03 • 30 FPS</span>
+                </div>
+            </div>
+
+            <div class="p-3 flex flex-col flex-1 justify-between gap-2 overflow-hidden">
+                <!-- Scenario Control Buttons -->
+                <div class="grid grid-cols-4 gap-1.5">
+                    <button class="scenario-btn btn-tech btn-secondary text-xs justify-center active-scenario" data-scenario="0">
+                        0: Pass
+                    </button>
+                    <button class="scenario-btn btn-tech btn-secondary text-xs justify-center" data-scenario="1">
+                        1: Missing Bolt
+                    </button>
+                    <button class="scenario-btn btn-tech btn-secondary text-xs justify-center" data-scenario="2">
+                        2: Wrong Part
+                    </button>
+                    <button class="scenario-btn btn-tech btn-secondary text-xs justify-center" data-scenario="3">
+                        3: Crack
+                    </button>
+                </div>
+
+                <!-- Live Stream Video Viewport with CAD Overlay -->
+                <div class="video-viewport flex-1" id="viewportContainer">
+                    <img id="liveFeedImg" src="" alt="Active Factory Camera Feed" class="hidden">
+                    <div id="videoPlaceholder" class="flex flex-col items-center justify-center text-slate-500 gap-2">
+                        <i data-lucide="video" class="w-10 h-10 stroke-1"></i>
+                        <span class="mono-font text-xs">Press [Execute Test Run] to Stream Inspection Stream</span>
+                    </div>
+
+                    <!-- HUD Telemetry Overlay -->
+                    <div class="absolute top-2 left-2 flex flex-col gap-1 pointer-events-none">
+                        <span class="mono-font text-[10px] bg-black/70 px-2 py-0.5 rounded text-cyan-400 border border-cyan-800/40">
+                            CAD REF: DIN 6921 M8
+                        </span>
+                    </div>
+                    <div class="absolute top-2 right-2 pointer-events-none">
+                        <span id="hudDefectBadge" class="mono-font text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-400 border border-emerald-800/40">
+                            ALL FASTENERS LOCKED
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Perturbation Controls & Trigger -->
+                <div class="flex items-center justify-between pt-1 border-t border-[#1a2335]">
+                    <div class="flex items-center gap-2">
+                        <label class="text-[11px] text-slate-400">Perturbation:</label>
+                        <select id="perturbationSelect" class="bg-[#141a27] border border-[#25324d] text-xs px-2 py-1 rounded text-slate-300 focus:outline-none">
+                            <option value="standard">Standard Lighting</option>
+                            <option value="angle_stress">Camera Angle Shift (±15°)</option>
+                            <option value="low_light">Low-Lux Drop (Shadows)</option>
+                            <option value="glare">Specular Glare Artifact</option>
+                        </select>
+                    </div>
+
+                    <button id="runScenarioBtn" class="btn-tech btn-primary">
+                        <i data-lucide="play" class="w-3.5 h-3.5 fill-white"></i>
+                        <span>Execute Test Run</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= QUADRANT 2: CONSOLIDATION & PROVENANCE (Top-Right) ================= -->
+        <section class="quadrant-card" id="q2Card">
+            <div class="card-header">
+                <div class="flex items-center gap-2">
+                    <span class="status-dot active-blue"></span>
+                    <h2 class="font-bold text-xs uppercase tracking-wider text-slate-200">Quadrant 2: Consolidation & Provenance</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="provenanceBadge" class="tech-badge badge-green">✓ LEDGER VERIFIED</span>
+                </div>
+            </div>
+
+            <div class="p-3 flex flex-col flex-1 gap-2.5 overflow-y-auto">
+                <!-- Metrics Bar: Deduplication & Noise Reduction -->
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="bg-[#151c2a] p-2 rounded border border-[#202a3f]">
+                        <div class="text-[10px] text-slate-400">RAW DETECTIONS</div>
+                        <div id="rawDetectionsVal" class="mono-font text-lg font-bold text-slate-200">27 frames</div>
+                    </div>
+                    <div class="bg-[#151c2a] p-2 rounded border border-[#202a3f]">
+                        <div class="text-[10px] text-slate-400">CONSOLIDATED RECORD</div>
+                        <div id="consolidatedVal" class="mono-font text-lg font-bold text-blue-400">1 Incident</div>
+                    </div>
+                    <div class="bg-[#151c2a] p-2 rounded border border-[#202a3f]">
+                        <div class="text-[10px] text-slate-400">NOISE REDUCTION</div>
+                        <div id="noiseReductionVal" class="mono-font text-lg font-bold text-emerald-400">96.3%</div>
+                    </div>
+                </div>
+
+                <!-- Active Incident Details -->
+                <div class="bg-[#131926] p-2.5 rounded border border-[#222c42] flex items-center justify-between">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span id="activeIncId" class="mono-font text-sm font-bold text-white">QI-0041</span>
+                            <span id="activeDefectBadge" class="tech-badge badge-red">STRUCTURAL_ABSENCE</span>
+                        </div>
+                        <div id="activeIncDesc" class="text-xs text-slate-400 mt-0.5">Bolt C unseated across 27 consecutive transit frames</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[10px] text-slate-500">CONFIDENCE (AVG)</div>
+                        <div id="activeIncConf" class="mono-font text-sm font-semibold text-emerald-400">98.2%</div>
+                    </div>
+                </div>
+
+                <!-- Cryptographic SHA-256 Hash Chain Block -->
+                <div class="bg-[#0f1420] p-2.5 rounded border border-[#1e273a] flex flex-col gap-1.5" id="hashBlockContainer">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-semibold text-slate-300 flex items-center gap-1.5">
+                            <i data-lucide="link" class="w-3.5 h-3.5 text-cyan-400"></i>
+                            <span id="blockIndexText">Block #14 (Sealed)</span>
+                        </span>
+                        <span id="blockTimestampText" class="mono-font text-[11px] text-slate-400">Just now</span>
+                    </div>
+                    <div class="mono-font text-[11px] text-slate-400 break-all bg-[#090d15] p-2 rounded border border-[#192233]">
+                        <div><span class="text-slate-600">PREV:</span> <span id="prevHashText" class="text-slate-400">0x8f3a19b2e041d882...</span></div>
+                        <div><span class="text-cyan-600">CURR:</span> <span id="currHashText" class="text-cyan-400 font-semibold">0x4c91a8e704193b21...</span></div>
+                    </div>
+
+                    <!-- Hash Actions -->
+                    <div class="flex items-center gap-2 pt-1">
+                        <button id="verifyLedgerBtn" class="btn-tech btn-secondary text-xs flex-1 justify-center">
+                            <i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-400"></i>
+                            Verify Ledger Integrity
+                        </button>
+                        <button id="simulateTamperBtn" class="btn-tech btn-danger text-xs flex-1 justify-center">
+                            <i data-lucide="flame" class="w-3 h-3 text-rose-400"></i>
+                            Simulate DB Tamper
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Closed-Loop MQTT Automation Log -->
+                <div class="bg-[#121824] p-2.5 rounded border border-[#1e273a]">
+                    <div class="text-[11px] font-semibold text-slate-300 mb-1 flex items-center gap-1.5">
+                        <i data-lucide="cpu" class="w-3.5 h-3.5 text-blue-400"></i>
+                        <span>Deterministic Floor Containment (MQTT Payload Dispatched)</span>
+                    </div>
+                    <div id="mqttCommandLog" class="mono-font text-[11px] text-slate-400 flex flex-col gap-0.5">
+                        <div class="text-emerald-400">► Diverter Arm #03: PULSE_EJECT (Unit routed to rework spur)</div>
+                        <div class="text-slate-400">► Conveyor Drive: NOMINAL_SPEED (1.2 m/s maintained)</div>
+                        <div class="text-amber-400">► Torque Spindle-03: Flagged for calibration check</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= QUADRANT 3: TRACEABILITY & SLA GOVERNANCE (Bottom-Left) ================= -->
+        <section class="quadrant-card">
+            <div class="card-header">
+                <div class="flex items-center gap-2">
+                    <span class="status-dot active-amber"></span>
+                    <h2 class="font-bold text-xs uppercase tracking-wider text-slate-200">Quadrant 3: Traceability & SLA Governance</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="tech-badge badge-amber">MSA-2026-09</span>
+                </div>
+            </div>
+
+            <div class="p-3 flex flex-col flex-1 justify-between gap-2 overflow-y-auto">
+                <!-- Blast Radius Traversal Breadcrumb -->
+                <div class="bg-[#141b28] p-2 rounded border border-[#212b40] mono-font text-[11px] flex flex-wrap items-center gap-1.5 text-slate-300">
+                    <span class="text-blue-400 font-bold" id="brInc">QI-0041</span>
+                    <span class="text-slate-600">➔</span>
+                    <span class="text-slate-300" id="brCell">Cell-03</span>
+                    <span class="text-slate-600">➔</span>
+                    <span class="text-amber-400 font-bold" id="brBatch">Batch B-042 (388 In-Flight)</span>
+                    <span class="text-slate-600">➔</span>
+                    <span class="text-cyan-400" id="brVendor">Vendor-X (Apex Ltd)</span>
+                    <span class="text-slate-600">➔</span>
+                    <span class="text-rose-400 font-semibold" id="brClause">Clause 4.2</span>
+                </div>
+
+                <!-- Financial Cost of Inaction Calculator -->
+                <div class="bg-[#0f1724] p-2.5 rounded border border-[#1e2a3f] flex items-center justify-between">
+                    <div>
+                        <div class="text-[10px] text-slate-400">RECALL EXPOSURE IF MISSED</div>
+                        <div class="mono-font text-xs text-rose-400 font-semibold">$14,162.00 (388 units)</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-slate-400">REWORK COST NOW</div>
+                        <div class="mono-font text-xs text-amber-400 font-semibold">$1,629.60</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[10px] text-slate-400">NET BENEFIT SAVED</div>
+                        <div class="mono-font text-sm font-bold text-emerald-400">+$12,532.40</div>
+                    </div>
+                </div>
+
+                <!-- SLA Reasoning Agent Assessment & NCR -->
+                <div class="bg-[#121927] p-2.5 rounded border border-[#1e293f] flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-semibold text-slate-200 mb-1 flex items-center justify-between">
+                            <span class="flex items-center gap-1">
+                                <i data-lucide="file-text" class="w-3.5 h-3.5 text-purple-400"></i>
+                                SLA Reasoning Agent Assessment
+                            </span>
+                            <span class="mono-font text-[10px] text-purple-400">RAG Grounded</span>
+                        </div>
+                        <p id="slaAgentBriefText" class="text-xs text-slate-300 leading-relaxed">
+                            "Structural absence breaches MSA-2026-09 Clause 4.2(b) (Critical Structural AQL limit of 0.50%). Recommended physical containment: Quarantine 388 in-flight units of Batch B-042. Recommended contractual remedy: Apply 15% invoice holdback ($2,137.50) against PO-9941."
+                        </p>
+                    </div>
+
+                    <!-- Role-Based Human Gate Controls -->
+                    <div class="pt-2 border-t border-[#1e293f] flex items-center justify-between mt-2">
+                        <span id="roleGateHint" class="text-[11px] text-slate-400 flex items-center gap-1">
+                            <i data-lucide="lock" class="w-3 h-3 text-slate-500"></i>
+                            Tier-2/3 Sign-Off Required
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <button id="btnRejectQuarantine" class="btn-tech btn-secondary text-xs">
+                                Reject
+                            </button>
+                            <button id="btnApproveQuarantine" class="btn-tech btn-primary text-xs">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                Approve Quarantine & NCR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= QUADRANT 4: SUPPLIER RISK INTELLIGENCE (Bottom-Right) ================= -->
+        <section class="quadrant-card">
+            <div class="card-header">
+                <div class="flex items-center gap-2">
+                    <span class="status-dot active-emerald"></span>
+                    <h2 class="font-bold text-xs uppercase tracking-wider text-slate-200">Quadrant 4: Supplier Risk Intelligence</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="tech-badge badge-blue">ISO 2859-1 AQL</span>
+                </div>
+            </div>
+
+            <div class="p-3 flex flex-col flex-1 justify-between gap-2 overflow-y-auto">
+                <!-- Macro Cross-Batch Pattern Alert -->
+                <div class="bg-[#1b1420] p-2.5 rounded border border-[#3b1d28] flex items-start gap-2.5">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-400 shrink-0 mt-0.5"></i>
+                    <div>
+                        <div class="text-xs font-bold text-rose-300">EMERGING PATTERN: Vendor-X (Apex Fasteners Ltd)</div>
+                        <div class="text-[11px] text-rose-200/80 mt-0.5" id="macroPatternText">
+                            3 incidents recorded across 2 component families in last 5 production runs (Cracks on B-038, Wrong Nut on B-040, Missing Bolt on B-042).
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Volume-Normalized Risk Scores -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Vendor Risk Comparison (Normalized per 1,000 units):</span>
+                        <span class="mono-font text-[11px] text-slate-400">FMEA Weighted</span>
+                    </div>
+
+                    <!-- Vendor-X Bar -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="font-semibold text-slate-200">Vendor-X (Apex Industrial)</span>
+                            <span class="mono-font font-bold text-rose-400" id="vendorXScore">78.0 / 100 [CRITICAL]</span>
+                        </div>
+                        <div class="w-full bg-[#1b2234] h-2 rounded-full overflow-hidden">
+                            <div id="vendorXBar" class="bg-gradient-to-r from-amber-500 to-rose-500 h-full rounded-full" style="width: 78%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Vendor-A Bar -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="font-semibold text-slate-200">Vendor-A (Steelworks Co)</span>
+                            <span class="mono-font text-emerald-400">14.2 / 100 [NORMAL]</span>
+                        </div>
+                        <div class="w-full bg-[#1b2234] h-2 rounded-full overflow-hidden">
+                            <div class="bg-emerald-500 h-full rounded-full" style="width: 14%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ISO 2859-1 Switching Rule Notification -->
+                <div class="bg-[#131b2c] p-2 rounded border border-[#213050] flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 text-cyan-400"></i>
+                        <div>
+                            <div class="text-xs font-bold text-cyan-300">Automated ISO 2859-1 Inspection Escalation:</div>
+                            <div class="text-[11px] text-slate-400">Upcoming Batch B-043 escalated: NORMAL ➔ TIGHTENED PRE-LINE AUDIT II</div>
+                        </div>
+                    </div>
+                    <span class="tech-badge badge-amber text-[10px]">Active</span>
+                </div>
+
+                <!-- Operator Feedback Loop (Learn Stage) -->
+                <div class="pt-2 border-t border-[#1a2335] flex items-center justify-between">
+                    <div class="text-[11px] text-slate-400">
+                        Accuracy Loop: <span id="tpRateVal" class="text-emerald-400 font-mono font-bold">94.2%</span> True Positives
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[11px] text-slate-400 mr-1">Feedback:</span>
+                        <button class="feedback-btn btn-tech btn-secondary text-[11px] px-2 py-0.5" data-verdict="CORRECT">
+                            ✓ Correct
+                        </button>
+                        <button class="feedback-btn btn-tech btn-secondary text-[11px] px-2 py-0.5" data-verdict="FALSE_POSITIVE">
+                            ✗ False Pos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Drawer for Ledger Verification & Tamper Details -->
+    <div id="tamperModal" class="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-[#121722] border border-[#232d42] rounded-lg max-w-lg w-full p-4 shadow-2xl space-y-3">
+            <div class="flex items-center justify-between border-b border-[#1f283d] pb-2">
+                <h3 class="font-bold text-sm text-white flex items-center gap-2" id="modalTitle">
+                    <i data-lucide="shield-alert" class="w-4 h-4 text-rose-500"></i>
+                    Integrity Audit Report
+                </h3>
+                <button id="closeModalBtn" class="text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div id="modalBody" class="mono-font text-xs text-slate-300 space-y-2 leading-relaxed">
+                <!-- Injected via app.js -->
+            </div>
+            <div class="flex justify-end pt-2 border-t border-[#1f283d]">
+                <button id="modalResetBtn" class="btn-tech btn-secondary text-xs mr-2">Reset / Recalibrate Chain</button>
+                <button id="modalOkBtn" class="btn-tech btn-primary text-xs">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Client Controller Script -->
+    <script src="/static/app.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,8 @@
+ultralytics>=8.3.0
+opencv-python>=4.10.0
+numpy>=1.26.0
+streamlit>=1.40.0
+easyocr>=1.7.0
+# Optional OCR: pytesseract can also be used if Tesseract is installed
+pytesseract>=0.3.13
+reportlab>=4.2.0
